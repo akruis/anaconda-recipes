@@ -3,12 +3,12 @@ package:
   version: 2.7.13
 
 source:
-  fn: Python-2.7.13.tgz
-  url: https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz
-  md5: 17add4bf0ad0ec2f08e0cae6d205c700
+  fn: stackless-2713-export.tar.bz2
+  url: http://www.stackless.com/binaries/stackless-2713-export.tar.bz2
+  md5: c01210c08328f4afecb5d4c95d8af0ae
   patches:
     - version.patch
-    - cprt.patch
+    - cprt.patch                      [False]
     - linux-clear_history.patch       [linux]
     - fix-readline-extra-space.patch  [linux and x86]
     - osx-dist.patch                  [osx and x86_64]
@@ -26,6 +26,7 @@ build:
     - DLLs/_ctypes.pyd                [win]
   features:
     - debug                           [debug]
+    - stackless
   track_features:
     - vc9                             [win]
 
@@ -39,6 +40,8 @@ requirements:
     - readline 6.2                    [unix and x86]
     - tk 8.5.18                       [unix and x86]
     - openssl 1.0.2*                  [unix]
+    - patch                           [win]
+    - vc 9*                           [win]
   run:
     - zlib 1.2.*                      [unix]
     - sqlite 3.13.*                   [unix]
@@ -55,9 +58,11 @@ test:
     - idle -h                         [x86]
   files:
     - hello.txt.gz
+  requires:
+    - stackless
 
 about:
-  home: http://www.python.org/
+  home: http://www.stackless.com/
   license: PSF
   license_file: LICENSE
   summary: general purpose programming language
@@ -68,5 +73,5 @@ about:
     fewer lines of code than would be possible in languages such as C++ or
     Java. The language provides constructs intended to enable clear programs
     on both a small and large scale.
-  doc_url: https://www.python.org/doc/versions/
-  dev_url: https://docs.python.org/devguide/
+  doc_url: http://stackless.readthedocs.io/en/v2.7.13-slp/
+  dev_url: https://bitbucket.org/stackless-dev/stackless

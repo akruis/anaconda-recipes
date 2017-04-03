@@ -29,6 +29,7 @@ if [ `uname` == Linux ]; then
     export LDFLAGS="$LDFLAGS -L$PREFIX/lib -Wl,-rpath=$PREFIX/lib,--no-as-needed"
     ./configure --enable-shared --enable-ipv6 --enable-unicode=ucs4 $DOPT \
         --prefix=$PREFIX \
+        --enable-stacklessfewerregisters \
         --with-tcltk-includes="-I$PREFIX/include" \
         --with-tcltk-libs="-L$PREFIX/lib -ltcl8.5 -ltk8.5"
 fi

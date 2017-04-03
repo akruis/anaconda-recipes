@@ -10,18 +10,6 @@ index cfb02b0..904a24d 100644
  PyAPI_FUNC(const char *) Py_GetVersion(void);
  PyAPI_FUNC(const char *) Py_GetPlatform(void);
  PyAPI_FUNC(const char *) Py_GetCopyright(void);
-diff --git Lib/platform.py Lib/platform.py
-index 63455ce..0d429c6 100755
---- Lib/platform.py
-+++ Lib/platform.py
-@@ -1317,6 +1317,7 @@ def processor():
- 
- _sys_version_parser = re.compile(
-     r'([\w.+]+)\s*'  # "version<space>"
-+    r'(?:\|[^|]*\|)?\s*' # version extra
-     r'\(#?([^,]+)'  # "(#buildno"
-     r'(?:,\s*([\w ]*)'  # ", builddate"
-     r'(?:,\s*([\w :]*))?)?\)\s*'  # ", buildtime)<space>"
 diff --git Modules/main.c Modules/main.c
 index ef9b245..caece2b 100644
 --- Modules/main.c
@@ -36,15 +24,13 @@ index ef9b245..caece2b 100644
          return 0;
      }
  
-diff --git Python/getversion.c Python/getversion.c
-index 7bd6efd..643c968 100644
---- Python/getversion.c
-+++ Python/getversion.c
-@@ -5,11 +5,52 @@
+diff -r 280b23777672 Python/getversion.c
+--- Python/getversion.c	Wed Mar 29 23:08:51 2017 +0200
++++ Python/getversion.c	Mon Apr 03 19:07:47 2017 +0200
+@@ -5,6 +5,44 @@
  
  #include "patchlevel.h"
  
-+
 +#ifdef MS_WIN32
 +#define STDLIB_DIR  "\\Lib\\"
 +#else
@@ -64,7 +50,7 @@ index 7bd6efd..643c968 100644
 +
 +    f = fopen(path, "rb");
 +    if (f == NULL) {
-+        strcpy(res, "Continuum Analytics, Inc.");
++        strcpy(res, " packaged by stackless.com ");
 +    }
 +    else {
 +        i = 0;
@@ -80,12 +66,29 @@ index 7bd6efd..643c968 100644
 +    return res;
 +}
 +
++#undef STDLIB_DIR
 +
++
+ #ifdef STACKLESS
+ 	/* avoiding to recompile everything for Stackless all the time */
+ #include "stackless_version.h"
+@@ -13,8 +51,8 @@
+ Py_GetVersion(void)
+ {
+ 	static char version[250];
+-	PyOS_snprintf(version, sizeof(version), "%.80s Stackless %.80s (%.80s) %.80s", 
+-		      PY_VERSION, STACKLESS_VERSION, Py_GetBuildInfo(), Py_GetCompiler());
++	PyOS_snprintf(version, sizeof(version), "%.80s Stackless %.80s |%s| (%.80s) %.80s",
++		      PY_VERSION, STACKLESS_VERSION, Anaconda_GetVersion(), Py_GetBuildInfo(), Py_GetCompiler());
+ 	return version;
+ }
+ 
+@@ -23,10 +61,12 @@
  const char *
  Py_GetVersion(void)
  {
 -	static char version[250];
--	PyOS_snprintf(version, sizeof(version), "%.80s (%.80s) %.80s",
+-	PyOS_snprintf(version, sizeof(version), "%.80s (%.80s) %.80s", 
 -		      PY_VERSION, Py_GetBuildInfo(), Py_GetCompiler());
 -	return version;
 +    static char version[250];
@@ -95,5 +98,5 @@ index 7bd6efd..643c968 100644
 +                  Py_GetBuildInfo(), Py_GetCompiler());
 +    return version;
  }
-+
-+#undef STDLIB_DIR
+ 
+ #endif

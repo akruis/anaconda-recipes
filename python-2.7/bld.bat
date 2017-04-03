@@ -3,11 +3,11 @@ REM ========== prepare source
 if "%ARCH%"=="64" (
     set PLATFORM=x64
     set DMSW=-DMS_WIN64
-    curl https://www.python.org/ftp/python/%PKG_VERSION%/python-%PKG_VERSION%.amd64-pdb.zip -o pdbs.zip
+    curl http://www.stackless.com/binaries/python-%PKG_VERSION%150.amd64-pdb-stackless.zip -o pdbs.zip
 ) else (
     set PLATFORM=Win32
     set DMSW=
-    curl https://www.python.org/ftp/python/%PKG_VERSION%/python-%PKG_VERSION%-pdb.zip -o pdbs.zip
+    curl http://www.stackless.com/binaries/python-%PKG_VERSION%150-pdb-stackless.zip -o pdbs.zip
 )
 
 %SYS_PREFIX%\Scripts\replace.exe "@DMSW@" "%DMSW%" Lib\distutils\cygwinccompiler.py
@@ -19,7 +19,7 @@ vcbuild PC\VS9.0\pcbuild.sln "Release|%PLATFORM%"
 
 REM ========== add stuff from official python.org msi
 
-set MSI_DIR=\Pythons\%PKG_VERSION%-%ARCH%
+set MSI_DIR=\Pythons\%PKG_VERSION%-%ARCH%-slp
 for %%x in (DLLs Doc libs tcl Tools) do (
     xcopy /s %MSI_DIR%\%%x %PREFIX%\%%x\
     if errorlevel 1 exit 1
